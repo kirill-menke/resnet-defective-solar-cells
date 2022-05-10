@@ -3,10 +3,11 @@ import sys
 
 import torch as t
 
+sys.path.append("..")
 from trainer import Trainer
 from model import *
 
-ONNX_DIR = "./onnx"
+ONNX_DIR = "../onnx"
 
 if not os.path.exists(ONNX_DIR):
     os.mkdir(ONNX_DIR)

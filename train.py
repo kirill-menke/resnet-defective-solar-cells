@@ -49,7 +49,7 @@ loss = t.nn.BCELoss()
 trainer = Trainer(res_net, loss, optim, [scheduler, scheduler2], train_dl, val_dl, True)
 res = trainer.fit(5)
 
-# Plot the results
+# Plot train and validation loss
 plt.plot(np.arange(len(res[0])), res[0], label='train loss')
 plt.plot(np.arange(len(res[1])), res[1], label='val loss')
 plt.axhline(y = 0.2, color = 'k', linestyle = 'dashed')
