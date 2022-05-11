@@ -64,6 +64,7 @@ The Binary Cross Entropy loss is used sind a solar cell can have both defects, i
 loss = t.nn.BCELoss()
 ```
 
+## Data Augmentation
 
 ## Usage
 
