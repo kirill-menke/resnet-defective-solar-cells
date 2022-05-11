@@ -49,22 +49,35 @@ The original final linear layer is replaced by a linear layer with only two outp
 res_net = tv.models.resnet34(pretrained=True)
 res_net.fc = nn.Sequential(nn.Linear(512, 2), nn.Sigmoid())
 ```
-An alternative custom ResNet has been defined in `model.py` and can also be used here instead.
-However, a comparison has shown that the pre-trained variant performs better (i.e. has a higher f1-score).
+For experimental purposes, a custom ResNet was initially implemented in `model.py`. 
+It can be modified easier, e.g. to implement [other ResNet variants](https://towardsdatascience.com/an-overview-of-resnet-and-its-variants-5281e2f56035), but has to be trained from scratch. A comparison has shown that the pre-trained variant from PyTorch performs better (i.e. has a higher f1-score), which is why it is used here.
 
-A simple SGD with momentum is used as loss function:
+A simple SGD with momentum is used for gradient descent:
 ```python
 # Optimizer: SGD with Momentum
 optim = t.optim.SGD(res_net.parameters(), lr=0.01, momentum=0.9, weight_decay=0.0001)
 ```
 
-The Binary Cross Entropy loss is used sind a solar cell can have both defects, i.e. the classes are not mutually exclusive.
+In addition, a learning rate decay was introduced to achieve a better convergence to the minimum and to prevent oscillation.
+A higher initial learning rate also helps to accelerate the training in the beginning.
+```python
+# Learning rate decay
+scheduler = t.optim.lr_scheduler.MultiStepLR(optim, milestones=[10, 20 , 30 , 40], gamma=0.1)
+scheduler2 = t.optim.lr_scheduler.MultiStepLR(optim, milestones=[60, 80, 100, 130], gamma=0.5)
+```
+
+The Binary Cross Entropy loss is used sind a solar cell can have both defects, i.e. the classes are **not** mutually exclusive.
 ```python
 # Loss criterion for multi-label classification
 loss = t.nn.BCELoss()
 ```
 
-## Data Augmentation
+Finally, we train our model for 5 epochs:
+```python
+# Start training
+trainer = Trainer(res_net, loss, optim, [scheduler, scheduler2], train_dl, val_dl, True)
+res = trainer.fit(epochs=5)
+```
 
 ## Usage
 
