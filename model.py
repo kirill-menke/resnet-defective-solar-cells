@@ -37,7 +37,7 @@ class ResNet(nn.Module):
 
     def __init__(self):
         super(ResNet, self).__init__()
-        # 3, 4, 6, 3
+        
         self.res_net = nn.Sequential(
             nn.Conv2d(3, 64, kernel_size=7, stride=2),
             nn.BatchNorm2d(64),
@@ -64,15 +64,7 @@ class ResNet(nn.Module):
             nn.Linear(512, 2),
             nn.Sigmoid()
         )
-
-        # self.apply(weights_init)
                 
 
     def forward(self, x):
         return self.res_net(x)
-
-
-    def weights_init(m):
-        if isinstance(m, nn.Conv2d):
-            t.nn.init.kaiming_uniform_(m.weight.data, nonlinearity='relu')
-            t.nn.init.constant_(m.bias.data, 0)
