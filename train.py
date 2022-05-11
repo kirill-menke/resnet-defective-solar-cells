@@ -42,12 +42,12 @@ optim = t.optim.SGD(res_net.parameters(), lr=0.01, momentum=0.9, weight_decay=0.
 scheduler = t.optim.lr_scheduler.MultiStepLR(optim, milestones=[10, 20 , 30 , 40], gamma=0.1)
 scheduler2 = t.optim.lr_scheduler.MultiStepLR(optim, milestones=[60, 80, 100, 130], gamma=0.5)
 
-# Loss criterion for multi-class classification
+# Loss criterion for multi-label classification
 loss = t.nn.BCELoss()
 
 # Start training
 trainer = Trainer(res_net, loss, optim, [scheduler, scheduler2], train_dl, val_dl, True)
-res = trainer.fit(5)
+res = trainer.fit(epochs=5)
 
 # Plot train and validation loss
 plt.plot(np.arange(len(res[0])), res[0], label='train loss')
