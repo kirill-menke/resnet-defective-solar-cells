@@ -2,7 +2,7 @@
 Within this project I implemented a Residual Neural Network in PyTorch and using it for classifying defects of solar cells.
 Solar cells can exhbit various types of degradation caused by inappropriate transportation, installation, or bad weather conditions such as wind, snow, or hail.
 The model implemented here, focuses on two different types of defects described in more detail below. 
-A ResNet-34 from PyTorch pretrained on the ImageNet database is used for this multi-label classification task.
+A ResNet-34 from PyTorch pre-trained on the ImageNet database is used for this multi-label classification task.
 
 ## Dataset
 The training and prediction is performed on electrolumiscence images of functional and defective solar cells.
@@ -66,22 +66,50 @@ scheduler = t.optim.lr_scheduler.MultiStepLR(optim, milestones=[10, 20 , 30 , 40
 scheduler2 = t.optim.lr_scheduler.MultiStepLR(optim, milestones=[60, 80, 100, 130], gamma=0.5)
 ```
 
-The Binary Cross Entropy loss is used sind a solar cell can have both defects, i.e. the classes are **not** mutually exclusive.
+The Binary Cross Entropy loss is used since a solar cell can have both defects, i.e. the classes are **not** mutually exclusive.
 ```python
 # Loss criterion for multi-label classification
 loss = t.nn.BCELoss()
 ```
 
-Finally, we train our model for 5 epochs:
+Finally, we train the model for 3 epochs:
 ```python
 # Start training
 trainer = Trainer(res_net, loss, optim, [scheduler, scheduler2], train_dl, val_dl, True)
-res = trainer.fit(epochs=5)
+res = trainer.fit(epochs=3)
 ```
 
 ## Usage
+The training can be started by running `train.py`. It will output the mean training loss, test loss, and f1-score for each epoch.
+```shell
+python ./train.py
+
+--- Epoch 0 ---
+TRAIN loss:  0.21747165854606362
+VAL loss:  0.14493816259470502
+F1 mean:  0.7891505377966179 
+
+--- Epoch 1 ---
+TRAIN loss:  0.14211737239388403
+VAL loss:  0.11095502575491688
+F1 mean:  0.862432372341214 
+
+--- Epoch 2 ---
+TRAIN loss:  0.12423488219441087
+VAL loss:  0.10103361068220693
+F1 mean:  0.8888840598606342
+```
+
+A snapshot of the model weights will be saved in `./checkpoints` after each epoch, labeled with the respective number.
+The script `export_onnx.py` can be used to create a portable `.onnx` file from these snapshots. It will be placed in the `./onnx` folder.
+
+```shell
+# Creating .onnx file for the model after epoch 3
+python export_onnx.py 3
+```
+
 
 - visualize_activations.py
-- export_onnx
+
 
 
