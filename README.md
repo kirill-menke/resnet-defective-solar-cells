@@ -16,11 +16,12 @@ Accordingly, each row in `data.csv` contains the path to an image and two number
 The three images below show samples for each type of defect. 
 A solar cell can either have a crack, an inactive region, or both with varying degrees of severity:
 
-![crack](doc/cell1108.png) &nbsp;&nbsp; ![inactive](doc/cell1623.png) &nbsp;&nbsp; ![crack](doc/cell0376.png)
+![crack](doc/crack.png) &nbsp;&nbsp; ![inactive](doc/inactive.png) &nbsp;&nbsp; ![crack](doc/crack+inactive.png)
 
 In total the `images/` folder contains 12,000 samples of 300x300 pixels 8-bit grayscale images. 
 However, only the first 2,000 samples are unique and the rest was created through data augmentation.
 Each image was flipped horizontally and vertically and rotated three times by 90 degrees, meaning 6 different variations were created for each sample.
+This helps to reduce overfitting and improves classification performance.
 
 The original 2,000 samples have the following data distribution:
 - *Functional Cells*: 1545
@@ -31,7 +32,7 @@ The original 2,000 samples have the following data distribution:
 ## Implementation
 The code snippets below can be found in `train.py` and briefly describes the process and implementation of the model.
 
-Initially, the data is split into training and test set. To ensure that the samples are equally distributed between both sets, a stratified split is performed:
+Initially, the dataset is split into 90% training and 10% test data. To ensure that the samples are equally distributed between both sets, a stratified split is performed:
 ```python
 # Load the data from the csv file
 df = pd.read_csv('data.csv', sep=';')
@@ -79,6 +80,13 @@ trainer = Trainer(res_net, loss, optim, [scheduler, scheduler2], train_dl, val_d
 res = trainer.fit(epochs=3)
 ```
 
+### Data Augmentation
+The photos of the solar cells suffer from slight rotation and translation.
+To make the model more robust in this regard, the following transformations are randomly applied to some samples during the training process:
+- Rotation: ±3°
+- Translation: ±2%
+- Crop: ±2%
+
 ## Usage
 The training can be started by running `train.py`. It will output the mean training loss, test loss, and f1-score for each epoch.
 ```shell
@@ -100,16 +108,19 @@ VAL loss:  0.10103361068220693
 F1 mean:  0.8888840598606342
 ```
 
-A snapshot of the model weights will be saved in `./checkpoints` after each epoch, labeled with the respective number.
-The script `export_onnx.py` can be used to create a portable `.onnx` file from these snapshots. It will be placed in the `./onnx` folder.
+A snapshot of the model including its weights will be saved in `./checkpoints` after each epoch, labeled with the respective number.
 
+The script `export_onnx.py` can be used to create a portable `.onnx` file from these snapshots. It will be placed in the `./onnx` folder.
 ```shell
 # Creating .onnx file for the model after epoch 3
 python export_onnx.py 3
 ```
 
-
-- visualize_activations.py
+The script `visualize_activations.py` can be used to visualize the feature maps after each convolution layer. It will be placed in the `./plots` folder.
+```shell
+# Visualizing the feature maps for model after epoch 3
+python visualize_activations.py 3
+```
 
 
 

@@ -38,7 +38,7 @@ for module in model.modules():
         module.register_forward_hook(get_activation(f"Conv {module.in_channels}, {module.out_channels}"))
 
 
-# Pick image for which you want to visualize the activations
+# Pick sample for which you want to visualize the activations
 x, y = dataset[59]
 y_pred = model(x.unsqueeze(0)).squeeze()
 loss = nn.BCELoss()(y_pred, y)
