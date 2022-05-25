@@ -116,12 +116,14 @@ The script `export_onnx.py` can be used to create a portable `.onnx` file from t
 python export_onnx.py 3
 ```
 
-The script `visualize_activations.py` can be used to visualize the feature maps after each convolution layer. It will be placed in the `plots/` folder.
+The script `visualize_activations.py` can be used to visualize the feature maps after each convolution layer. Each image is formed from the average of all feature maps produced by the respective convolution layer.
+It will be placed in the `plots/` folder.
 ```shell
 # Visualizing the feature maps for model after epoch 3
 python visualize_activations.py 3
 ```
 
-
-
 ![feature_maps](doc/feature_maps.png)
+
+We can see that the feature maps get smaller (i.e. reduce in pixel size) the deeper the convolution layer resides in the neural network. This happens due to the gradual downscaling by several max-pooling layer.
+The last image shows a cluster of dark pixels at the location of the crack on the solar cell. This shows that the neural network could succesfully learn an abstract feature representation of the crack.
