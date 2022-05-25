@@ -124,3 +124,4 @@ python visualize_activations.py 3
 
 
 
+![feature_maps](doc/feature_maps.png)

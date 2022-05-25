@@ -51,4 +51,4 @@ for i, (name, feature_map) in enumerate(activations.items()):
     imgplot = plt.imshow(feature_map)
     a.axis("off")
     a.set_title(name, fontsize=30)
-plt.savefig('plots/feature_maps.jpg', bbox_inches='tight')
+plt.savefig('plots/feature_maps.png', bbox_inches='tight')
