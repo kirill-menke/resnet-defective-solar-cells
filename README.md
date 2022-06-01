@@ -2,7 +2,7 @@
 Within this project I implemented a Residual Neural Network in PyTorch and used it for classifying defects of solar cells.
 Solar cells can exhbit various types of degradation caused by inappropriate transportation, installation, or bad weather conditions such as wind or hail.
 The model implemented here, focuses on the classification of two different types of defects described in more detail below. 
-A ResNet-34 from PyTorch pre-trained on the ImageNet database is used for this task.
+A ResNet-34 from PyTorch pre-trained on the ILSVRC2012 ImageNet database is used for this task. All layers were fine-tuned to adapt to the classification of solar-cell defects.
 
 ## Dataset
 The training and prediction is performed on electrolumiscence images of functional and defective solar cells.
@@ -43,8 +43,8 @@ stratify_labels = [class_map[(x, y)] for x, y in df[['crack', 'inactive']].to_nu
 train, test = train_test_split(df, test_size=0.1, shuffle=True, random_state=2, stratify=stratify_labels)
 ```
 
-For the classification the ResNet-34 of PyTorch is used which was already pre-trained on the ImageNet database. 
-The original final linear layer is replaced by a linear layer with only two output neurons, since in contrast to the ImageNet dataset, we only work with two classes (Cracks and inactive regions):
+For the classification the ResNet-34 of PyTorch is used which was already pre-trained on the ILSVRC2012 ImageNet database. 
+The original final linear layer is replaced by a linear layer with only two output neurons, since in contrast to the ImageNet dataset, I only work with two classes (Cracks and inactive regions):
 ```python
 # Create an instance of a pretrained ResNet model
 res_net = tv.models.resnet34(pretrained=True)
@@ -73,7 +73,7 @@ The Binary Cross Entropy loss is used since a solar cell can have both defects, 
 loss = t.nn.BCELoss()
 ```
 
-Finally, we train the model for 3 epochs:
+Finally, the model is trained for 3 epochs to fine-tune the weights of the pre-trained ResNet. Since the dataset used here is large and very different compared to ImageNet (electrolumiscence images vs. *natural* images), I only use the weights of the pre-trained model as initialization, i.e. all layers are retrained:
 ```python
 # Start training
 trainer = Trainer(res_net, loss, optim, [scheduler, scheduler2], train_dl, val_dl, True)
